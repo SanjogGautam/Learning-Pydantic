@@ -14,6 +14,16 @@ user1=user(
     email="gautamsanjok32@gmail.com",
     is_active=False
 )
+#validation error
+try:
+    user2=user(
+        uid="a", #this will cause a validation error because uid is expected to be an int
+        username="Sanjog",
+        email="gautam@32",
+        is_active=False
+    )
+except ValidationError as e:
+    print(e)
 print(user)
 print(user1)
 #we can access the fields using (.) operator 
