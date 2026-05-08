@@ -1,7 +1,6 @@
-# custom validators in pydantic
-from pydantic import (BaseModel, Field, field_validator,
-                      ValidationError, model_validator,HttpUrl,ConfigDict)
-#field validator is used to validate individual fields, while model validator is used to validate the entire model after all field validators have run.
+#computable field it is used to compute two different fields
+#computable fields are defined using the @computed_field decorator, which allows you to create fields that are computed based on other fields in the model. These fields are read-only and are not included in the input data when creating an instance of the model.
+from pydantic import(BaseModel, Field, field_validator, ValidationError, model_validator, HttpUrl, ConfigDict, computed_field)
 class User(BaseModel):
     model_config=ConfigDict(populate_by_name=True)
     name: str = Field(..., min_length=3, max_length=50)
@@ -32,9 +31,11 @@ class User(BaseModel):
         if name and age and name.lower() == 'sanjog' and age < 20:
             raise ValueError('Sanjog must be at least 20 years old')
         return values
-try:
-    user = User(name='Sanjog', age=20,website="sanjoggautam.com.np")
+    @computed_field
+    @property
+    def is_adult(self) -> bool:
+        return self.age >= 18
+try:    user = User(name='Sanjog', age=20,website="sanjoggautam.com.np")
 except ValidationError as e:    
     print(e)
-print(user)
-
+print(user.model_dump_json(indent=2))
